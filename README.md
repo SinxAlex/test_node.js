@@ -3,6 +3,14 @@
 [![DummyJSON](https://img.shields.io/badge/API-DummyJSON-21BCDD?style=for-the-badge&logo=JSON)](https://dummyjson.com/)
 [![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
 
+## 🚀 Основные функции
+
+- **function  getAllData(url)**: функция для получение данных.
+- **function createDynamicTableSQL(client, tableName, data) 2**:функция для создание динамической таблицы по столбцам из json.
+- **function filterData(substring,data)**: функция сортировки данных по ключевому слову.
+- **function insertData(client, tableName, product): функция добавления полученных данных в таблицу.
+
+
 ## 🖥 Пример основного кода
 
 ```javascript
