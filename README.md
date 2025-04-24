@@ -1,48 +1,66 @@
-﻿# Тестовая задача  https://dummyjson.com/
-#пример кода ```js
-async  function  main(){
-    const {Client} = require('pg');
-    const tableName='products';
-// Настройки подключения
+# 📦 Тестовая задача для работы с API DummyJSON
+
+[![DummyJSON](https://img.shields.io/badge/API-DummyJSON-21BCDD?style=for-the-badge&logo=JSON)](https://dummyjson.com/)
+[![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-336791?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
+
+## 🖥 Пример основного кода
+
+```javascript
+// 📁 main.js
+const { Client } = require('pg');
+
+/**
+ * 🚀 Основная функция приложения
+ * @async
+ */
+async function main() {
+    // 🔐 Настройки подключения к БД
     const client = new Client({
-        host: 'localhost',             // Хост, обычно localhost
-        user: 'postgres',             // Ваше имя пользователя
-        password:'123456',     // Ваш пароль
+        host: 'localhost',
+        user: 'postgres',
+        password: '123456',
         port: '5432',
-        database:'test'
+        database: 'test'
     });
-    /** url api Products
-     * В заданий говорилось чтобы выбрать все продукты "iphone"
-     * не совсем понятно это категория, если подразумевается категория?
-     * то надо исполльзовать url ='https://dummyjson.com/products/search?q=phone';
-     * если же из общей url='https://dummyjson.com/products';
-     * если  нет то надо отфильтровать из всех данных элементы которые содержат слово iphone
-     *
-     * */
+
     try {
+        // 🔌 Подключаемся к базе данных
         await client.connect();
+        console.log('🔑 Успешное подключение к БД');
+
+        // 🛠 Параметры работы
         const tableName = 'products';
-        const url = 'https://dummyjson.com/products/search?q=phone';
+        const API_URL = 'https://dummyjson.com/products/search?q=phone';
+        const SEARCH_QUERY = 'iphone';
 
-        const products = await getAllData(url);
-        const sampleProduct = products.products[0];
+        // 📥 Получаем данные с API
+        const products = await getAllData(API_URL);
+        console.log(`📦 Получено ${products.products.length} товаров`);
 
-        // Создаем таблицу
-        await createDynamicTableSQL(client, tableName, sampleProduct);
+        // 🏗 Создаем таблицу на основе структуры первого товара
+        await createDynamicTableSQL(client, tableName, products.products[0]);
+        console.log('✅ Таблица успешно создана');
 
-        // Фильтруем и вставляем данные
-        const filtered = filterData('iphone', products.products);
+        // 🔍 Фильтруем товары по ключевому слову
+        const filteredProducts = filterData(SEARCH_QUERY, products.products);
+        console.log(`🔎 Найдено ${filteredProducts.products.length} совпадений`);
 
-        if (filtered.products.length > 0) {
-            for (const product of filtered.products) {
+        // 📝 Вставляем данные в БД
+        if (filteredProducts.products.length > 0) {
+            for (const product of filteredProducts.products) {
                 await insertData(client, tableName, product);
             }
+            console.log('💾 Данные успешно сохранены в БД');
         }
+        
     } catch (error) {
-        console.error('Main error:', error);
+        console.error('⛔ Ошибка:', error);
     } finally {
+        // 🔒 Закрываем подключение
         await client.end();
-        console.log('Connection closed');
+        console.log('🔌 Соединение с БД закрыто');
     }
-
 }
+
+// 🚨 Запуск приложения
+main().catch(console.error);
